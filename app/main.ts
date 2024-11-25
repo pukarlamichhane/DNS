@@ -3,7 +3,7 @@ import DNSHeader, { Opcode, ResponseCode, type TDNSHeader } from "./DNS/header";
 
 export const defaultHeaders: TDNSHeader = {
   id: 1234, // Default ID, should be overridden
-  qr: 0, // Query (not a response)
+  qr: 1, // Query (not a response)
   opcode: Opcode.Standard_Query,
   aa: 0, // Not authoritative
   tc: 0, // Not truncated
