@@ -7,7 +7,7 @@ export const defaultHeaders: TDNSHeader = {
   opcode: Opcode.Standard_Query,
   aa: 0, // Not authoritative
   tc: 0, // Not truncated
-  rd: 1, // Recursion desired
+  rd: 0, // Recursion desired
   ra: 0, // Recursion not available by default
   z: 0, // Reserved bits
   rcode: ResponseCode.NoError,
@@ -28,7 +28,7 @@ udpSocket.on("message", (data: Buffer, remoteAddr: dgram.RemoteInfo) => {
   try {
     const header = DNSHeader.write(defaultHeaders);
     console.log(`Received data from ${remoteAddr.address}:${remoteAddr.port}`);
-    const response: any = header;
+    const response = Buffer.concat([header]);
     udpSocket.send(response, remoteAddr.port, remoteAddr.address);
   } catch (e) {
     console.log(`Error sending data: ${e}`);
