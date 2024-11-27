@@ -1,5 +1,6 @@
 import * as dgram from "dgram";
 import DNSHeader, { Opcode, ResponseCode, type TDNSHeader } from "./DNS/header";
+import DNSQuestion, { Questionclass, Questiontype } from "./DNS/question";
 
 export const defaultHeaders: TDNSHeader = {
   id: 1234, // Default ID, should be overridden
@@ -16,18 +17,24 @@ export const defaultHeaders: TDNSHeader = {
   nscount: 0,
   arcount: 0,
 };
+
+export const defaultQuestions: DNSQuestion = {
+  name: "codecrafters.io",
+  class: Questionclass.IN,
+  type: Questiontype.A,
+};
 // You can use print statements as follows for debugging, they'll be visible when running tests.
 console.log("Logs from your program will appear here!");
 
-// Uncomment this block to pass the first stage
-//
 const udpSocket: dgram.Socket = dgram.createSocket("udp4");
 udpSocket.bind(2053, "127.0.0.1");
 //
 udpSocket.on("message", (data: Buffer, remoteAddr: dgram.RemoteInfo) => {
   try {
-    const header = DNSHeader.write(defaultHeaders);
     console.log(`Received data from ${remoteAddr.address}:${remoteAddr.port}`);
+    const header = DNSHeader.write({ ...defaultHeaders, qdcount: 1 });
+    const questions = DNSQuestion.write([defaultQuestions]);
+
     const response = Buffer.concat([header]);
     udpSocket.send(response, remoteAddr.port, remoteAddr.address);
   } catch (e) {
