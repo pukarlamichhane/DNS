@@ -1,6 +1,10 @@
 import * as dgram from "dgram";
 import DNSHeader, { Opcode, ResponseCode, type TDNSHeader } from "./DNS/header";
-import DNSQuestion, { Questionclass, Questiontype } from "./DNS/question";
+import DNSQuestion, {
+  Questionclass,
+  Questiontype,
+  type TDNSQuestions,
+} from "./DNS/question";
 
 export const defaultHeaders: TDNSHeader = {
   id: 1234, // Default ID, should be overridden
@@ -18,7 +22,7 @@ export const defaultHeaders: TDNSHeader = {
   arcount: 0,
 };
 
-export const defaultQuestions: DNSQuestion = {
+export const defaultQuestions: TDNSQuestions = {
   name: "codecrafters.io",
   class: Questionclass.IN,
   type: Questiontype.A,
@@ -35,7 +39,7 @@ udpSocket.on("message", (data: Buffer, remoteAddr: dgram.RemoteInfo) => {
     const header = DNSHeader.write({ ...defaultHeaders, qdcount: 1 });
     const questions = DNSQuestion.write([defaultQuestions]);
 
-    const response = Buffer.concat([header]);
+    const response = Buffer.concat([header, questions]);
     udpSocket.send(response, remoteAddr.port, remoteAddr.address);
   } catch (e) {
     console.log(`Error sending data: ${e}`);
